@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="jv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kode Redeem Airport Tycoon</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.18/index.css" />
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --accent: #f59e0b;
+            --bg-overlay: rgba(15, 23, 42, 0.85);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --used-bg: rgba(239, 68, 68, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            background-image: url('https://image.qwenlm.ai/public_source/ee31df9c-5790-46a2-b258-66771d816417/12eec500b-0677-4104-8c12-d2f95c266b7e.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -2;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            animation: float 15s infinite;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-overlay);
+            z-index: -1;
+            backdrop-filter: blur(4px);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInDown 0.8s ease-out;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #60a5fa, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5)); }
+            to { filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.5)); }
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        }
+
+        /* Reset Button */
+        .reset-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out 0.3s backwards;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+            font-size: 0.9rem;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .reset-btn:active {
+            transform: translateY(0);
+        }
+
+        .reset-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .stats {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .code-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            animation: fadeInUp 0.5s ease-out backwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .code-card:hover::before {
+            left: 100%;
+        }
+
+        .code-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.2);
+        }
+
+        .code-card.used {
+            background: var(--used-bg);
+            border-color: rgba(239, 68, 68, 0.3);
+            opacity: 0.8;
+        }
+
+        .code-card.used:hover {
+            border-color: var(--danger);
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
+        }
+
+        .code-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            flex: 1;
+        }
+
+        .code-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .used-badge {
+            background: var(--danger);
+            color: white;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+        }
+
+        .code-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            position: relative;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+
+        .code-card.used .code-value {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            text-decoration-color: var(--danger);
+            text-decoration-thickness: 2px;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            margin-left: 1rem;
+        }
+
+        .copy-btn:hover:not(:disabled) {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+
+        .copy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .copy-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2.5;
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        /* Warning Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            border: 2px solid var(--danger);
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .modal-icon svg {
+            width: 30px;
+            height: 30px;
+            color: var(--danger);
+        }
+
+        .modal h3 {
+            color: var(--danger);
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .modal p {
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+
+        .modal-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .modal-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--success);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 999px;
+            font-weight: 600;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stagger animation delay */
+        .code-card:nth-child(1) { animation-delay: 0.05s; }
+        .code-card:nth-child(2) { animation-delay: 0.1s; }
+        .code-card:nth-child(3) { animation-delay: 0.15s; }
+        .code-card:nth-child(4) { animation-delay: 0.2s; }
+        .code-card:nth-child(5) { animation-delay: 0.25s; }
+        .code-card:nth-child(6) { animation-delay: 0.3s; }
+        .code-card:nth-child(7) { animation-delay: 0.35s; }
+        .code-card:nth-child(8) { animation-delay: 0.4s; }
+        .code-card:nth-child(9) { animation-delay: 0.45s; }
+        .code-card:nth-child(10) { animation-delay: 0.5s; }
+        .code-card:nth-child(n+11) { animation-delay: 0.55s; }
+
+        @media (max-width: 640px) {
+            h1 { font-size: 1.8rem; }
+            .grid { grid-template-columns: 1fr; }
+            .code-card { padding: 1rem; }
+            .code-value { font-size: 1.1rem; }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <!-- Animated Particles -->
+    <div class="particles" id="particles"></div>
+
+    <div class="overlay"></div>
+
+    <div class="container">
+        <header>
+            <h1>✈️ Airport Tycoon Codes (By : AryaProject)</h1>
+            <div class="subtitle">💸 Kode aktif berlaku sekarang (Februari 2026)</div>
+        </header>
+
+        <div class="reset-section">
+            <button class="reset-btn" onclick="resetAllCodes()" aria-label="Reset semua kode">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"></path>
+                    <path d="M3 3v9h9"></path>
+                </svg>
+                Reset Kode
+            </button>
+            <div class="stats" id="stats">0 kode telah digunakan</div>
+        </div>
+
+        <div class="grid" id="codesGrid">
+            <!-- Codes will be injected here via JS -->
+        </div>
+    </div>
+
+    <!-- Warning Modal -->
+    <div class="modal-overlay" id="warningModal">
+        <div class="modal">
+            <div class="modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <h3>Kode Sudah Digunakan!</h3>
+            <p>Kode Redeem yang anda salin telah digunakan sebelumnya. Harap reset kode di menu reset untuk mengembalikan semua kode seperti awal.</p>
+            <button class="modal-btn" onclick="closeModal()">Mengerti</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Berhasil disalin!</span>
+    </div>
+
+    <script>
+        const codes = [
+            "WETHEBEST", "FREECASH", "MEGAWHALE", "NEWCODE", 
+            "CLIFFHANGER", "VALENTINES", "BLOXYCOLA", "200MIL", 
+            "490LIKES", "GIFT", "WHALETUBE", "SHUTTLE", 
+            "CASHPASS", "FIREBALL", "BONUS", "ROCKET", 
+            "320KLIKES", "AIRPORT", "30K", "INSTA", 
+            "VIP", "OSCAR", "PRIZE", "ATDISCORD", 
+            "CHIP", "480KCODE", "TURKEY"
+        ];
+
+        const STORAGE_KEY = 'airport_tycoon_used_codes';
+        const grid = document.getElementById('codesGrid');
+        const toast = document.getElementById('toast');
+        const modal = document.getElementById('warningModal');
+        const stats = document.getElementById('stats');
+        let toastTimeout;
+
+        // Create animated particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Get used codes from localStorage
+        function getUsedCodes() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                return stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        // Save used codes to localStorage
+        function saveUsedCodes(usedCodes) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(usedCodes));
+            } catch (e) {
+                console.error('Failed to save to localStorage:', e);
+            }
+        }
+
+        // Check if code is used
+        function isCodeUsed(code) {
+            return getUsedCodes().includes(code);
+        }
+
+        // Mark code as used
+        function markCodeAsUsed(code) {
+            const usedCodes = getUsedCodes();
+            if (!usedCodes.includes(code)) {
+                usedCodes.push(code);
+                saveUsedCodes(usedCodes);
+                updateStats();
+                renderCodes();
+            }
+        }
+
+        // Update stats display
+        function updateStats() {
+            const count = getUsedCodes().length;
+            stats.textContent = `${count} dari ${codes.length} kode telah digunakan`;
+        }
+
+        // Reset all codes
+        function resetAllCodes() {
+            if (confirm('Apakah Anda yakin ingin mereset semua kode? Semua kode akan kembali aktif.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                updateStats();
+                renderCodes();
+                showToast('Semua kode telah direset!', 'success');
+            }
+        }
+
+        // Show modal
+        function showModal() {
+            modal.classList.add('show');
+        }
+
+        // Close modal
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+
+        // Close modal on overlay click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        const copyIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+        </svg>
+        `;
+
+        const checkIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        `;
+
+        const lockIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+        `;
+
+        function showToast(message, type = 'success') {
+            toast.innerHTML = type === 'success' ? 
+                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg><span>${message}</span>` :
+                `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg><span>${message}</span>`;
+            
+            toast.className = 'toast show' + (type === 'warning' ? ' warning' : '');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function fallbackCopy(text) {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.focus();
+            textarea.select();
+            textarea.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+        }
+
+        function copyToClipboard(code, btnElement) {
+            // Check if code is already used
+            if (isCodeUsed(code)) {
+                showModal();
+                return;
+            }
+
+            const originalContent = btnElement.innerHTML;
+
+            function success() {
+                btnElement.innerHTML = checkIcon;
+                btnElement.classList.add('copied');
+                showToast('Berhasil disalin!');
+                
+                // Mark as used after successful copy
+                markCodeAsUsed(code);
+
+                setTimeout(() => {
+                    btnElement.innerHTML = lockIcon;
+                    btnElement.classList.remove('copied');
+                    btnElement.disabled = true;
+                }, 2000);
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(code)
+                    .then(() => success())
+                    .catch(() => {
+                        fallbackCopy(code);
+                        success();
+                    });
+            } else {
+                fallbackCopy(code);
+                success();
+            }
+        }
+
+        function renderCodes() {
+            grid.innerHTML = '';
+            codes.forEach((code, index) => {
+                const used = isCodeUsed(code);
+                const card = document.createElement('div');
+                card.className = 'code-card' + (used ? ' used' : '');
+                card.style.animationDelay = (index * 0.05) + 's';
+
+                card.innerHTML = `
+                    <div class="code-info">
+                        <span class="code-label">
+                            Kode #${index + 1}
+                            ${used ? '<span class="used-badge">DIGUNAKAN</span>' : ''}
+                        </span>
+                        <span class="code-value">${code}</span>
+                    </div>
+                    <button class="copy-btn" onclick="copyToClipboard('${code}', this)" aria-label="${used ? 'Kode sudah digunakan' : 'Salin kode'}" ${used ? 'disabled' : ''}>
+                        ${used ? lockIcon : copyIcon}
+                    </button>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        // Initialize
+        createParticles();
+        updateStats();
+        renderCodes();
+    </script>
+</body>
+</html>
